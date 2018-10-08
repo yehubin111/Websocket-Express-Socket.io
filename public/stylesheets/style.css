@@ -1,0 +1,124 @@
+body, p {
+  padding: 0;
+  margin: 0;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+input:focus{
+  outline: none;
+}
+
+a {
+  color: #00B7FF;
+}
+input[type=text]{
+  width: 300px;
+  height: 30px;
+  display: inline-block;
+}
+input[type=button]{
+  width: 100px;
+  height: 30px;
+  display: inline-block;
+}
+
+sendbox{
+  display: block;
+}
+.cont{
+  display: flex;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+.sendbox{
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+.sendbox #Target{
+  flex-basis: 50px;
+  line-height: 50px;
+  background-color: #57ab76;
+  color: #fff;
+  font-size: 26px;
+  padding-left: 20px;
+}
+.sendbox #Message{
+  flex-grow: 1;
+  background-color: #fafafa;
+  overflow-y: auto;
+}
+#Message .time{
+  padding-left: 20px;
+  font-size: 14px;
+  color: #999;
+  line-height: 20px;
+  margin-top: 20px;
+}
+#Message .info{
+  padding-left: 20px;
+  font-size: 16px;
+  color: #333;
+  line-height: 32px;
+}
+.sendbox .send{
+  flex-basis: 50px;
+  display: flex;
+  height: 50px;
+}
+.sendbox .send .input{
+  flex-grow: 1;
+  box-sizing: border-box;
+  border: 3px solid #57ab76;
+}
+.sendbox .send .input input{
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  box-sizing: border-box;
+  padding: 0 10px;
+}
+.sendbox .send .button{
+  flex-basis: 100px;
+}
+.sendbox .send .button input{
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: #57ab76;
+  font-size: 16px;
+  color: #fff;
+  cursor: pointer;
+}
+.friendlist{
+  flex-basis: 200px;
+  height: 100%;
+  border: 4px solid #57ab76;
+  background-color: #fff;
+  box-sizing: border-box;
+  width: 200px;
+}
+.friendlist h1{
+  font-size: 20px;
+  margin-left: 10px;
+}
+#Friends{
+  padding: 0 10px;
+}
+#Friends p{
+  margin-bottom: 10px;
+}
+#Friends a{
+  display: inline-block;
+  line-height: 20px;
+  padding: 0 10px;
+  background-color: #57ab76;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 3px;
+  font-size: 12px;
+  margin-top: 5px;
+}

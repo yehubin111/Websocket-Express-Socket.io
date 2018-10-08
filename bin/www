@@ -1,0 +1,153 @@
+#!/usr/bin/env node
+function timeFormat(vl, type) {
+  if (!vl)
+    return '';
+
+  let newdate = new Date();
+  newdate.setTime(vl);
+  let nyear = newdate.getFullYear();
+  let ftime = type ? type : 'yyyy-MM-dd HH:mm:ss';
+  let dateitems = {
+    'M': newdate.getMonth() + 1,
+    'd': newdate.getDate(),
+    'H': newdate.getHours(),
+    'm': newdate.getMinutes(),
+    's': newdate.getSeconds()
+  };
+  //替换年份
+  if (/(y+)/.test(ftime)) {
+    ftime = ftime.replace(RegExp.$1, nyear);
+  }
+  //替换月份以及其他的
+  for (let i in dateitems) {
+    if (new RegExp('(' + i + '+)').test(ftime)) {
+      ftime = ftime.replace(RegExp.$1, RegExp.$1.length === 1 ? dateitems[i] : ('00' + dateitems[i]).substring(('' + dateitems[i]).length));
+    }
+  }
+  return ftime;
+}
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('socket.oi:server');
+var http = require('http');
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+/**
+ * 解决socket.io 404问题
+ */
+let io = require('socket.io').listen(server);
+let connect_arr = []; // 所有连接的id
+
+io.on('connection', (socket) => {
+  console.log(socket.id);
+  console.log('a user connected');
+  // 设置用户名
+  socket.on('my name', (chat) => {
+    // 添加当前连接的人到列表中
+    connect_arr = connect_arr.filter(v => v.id != socket.id);
+    connect_arr.push({ id: socket.id, name: chat.msg });
+    // 广播，发送在线人数列表
+    io.sockets.emit('friend list', connect_arr);
+  });
+
+  // socket.broadcast.emit()表示向除了自己以外的客户端发送消息
+  // socket.broadcast.emit('server message', { msg: '', id: `${socket.id}` });
+
+  socket.on('disconnect', function (sk) {
+    console.log('user disconnected');
+
+    connect_arr = connect_arr.filter(v => v.id != socket.id);
+    // 广播，发送在线人数列表
+    io.sockets.emit('friend list', connect_arr);
+  })
+  socket.on('chat message', (chat) => {
+    console.log('message:' + chat.msg);
+
+    io.sockets.connected[chat.to].emit('chat message', { msg: chat.msg, name: chat.name, from: chat.from, time: timeFormat(new Date()) });
+  })
+
+
+})
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}

@@ -1,0 +1,22 @@
+extends layout
+
+block append scripts
+  script(type="text/javascript",src="/javascripts/index.js")
+
+block content
+  div(class="cont")
+    div(id="sendBox",class="sendbox")
+      p(class="target",id="Target")
+        发送消息
+      div(id="Message")
+      div(class="send")
+        p(class="input")
+          input(type="text",placeholder="请输入文字",id="Info")
+        p(class="button")
+          input(type="button",value="send",id="toSubmit")
+    div(class="friendlist")
+      h1
+        好友列表
+      div(id="Friends")
+    div(id="Introduce")
+
