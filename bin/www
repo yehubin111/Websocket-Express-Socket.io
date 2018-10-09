@@ -52,6 +52,7 @@ var server = http.createServer(app);
  */
 let io = require('socket.io').listen(server);
 let connect_arr = []; // 所有连接的id
+let message_arr = {}; // 消息列表集合
 
 io.on('connection', (socket) => {
   console.log(socket.id);
@@ -77,8 +78,21 @@ io.on('connection', (socket) => {
   })
   socket.on('chat message', (chat) => {
     console.log('message:' + chat.msg);
+    let tomsg = { msg: chat.msg, name: chat.name, from: chat.from, to: chat.to, time: timeFormat(new Date()) };
+    let frommsg = { msg: chat.msg, from: chat.from, time: timeFormat(new Date()) };
 
-    io.sockets.connected[chat.to].emit('chat message', { msg: chat.msg, name: chat.name, from: chat.from, time: timeFormat(new Date()) });
+    // let key = [chat.form, chat.to];
+    // if(!message_arr[key.join('&')] && !message_arr[key.reverse().join('&')]){
+    //   message_arr[key.join('&')] = []
+    // }
+    // if(message_arr[key.join('&')]){
+    //   message_arr[key.join('&')].push(msg);
+    // }else{
+    //   message_arr[key.reverse().join('&')].push(msg);
+    // }
+
+    io.sockets.connected[chat.to].emit('chat message', tomsg);
+    io.sockets.connected[chat.from].emit('chat message', frommsg);
   })
 
 

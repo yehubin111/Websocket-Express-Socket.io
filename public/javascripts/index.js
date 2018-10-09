@@ -30,11 +30,11 @@ socket.on('chat message', function (chat) {
     let msgbox = document.getElementById('Message');
     let p_time = document.createElement('p');
     p_time.innerText = chat.time;
-    p_time.className = 'time';
+    p_time.className = chat.from == socket.id ? 'time from' : 'time to';
     msgbox.appendChild(p_time);
     let p_info = document.createElement('p');
-    p_info.innerText = chat.msg;
-    p_info.className = 'info';
+    p_info.innerHTML = `<span>${chat.msg}</span>`;
+    p_info.className = chat.from == socket.id ? 'info from' : 'info to';
     msgbox.appendChild(p_info);
 
     // // 记录消息来源id，显示消息提醒
@@ -44,8 +44,10 @@ socket.on('chat message', function (chat) {
     // infobox.appendChild(info);
 
     // 如果有人给你发消息，自动弹出发消息框
-    document.getElementById('Target').innerHTML = `给${chat.name}发送消息`;
-    targetid = chat.from;
+    if (chat.from != socket.id) {
+        document.getElementById('Target').innerHTML = `给${chat.name}发送消息`;
+        targetid = chat.from;
+    }
 })
 // socket.on('server message', function (svchat) {
 //     let msgbox = document.getElementById('Friends');
